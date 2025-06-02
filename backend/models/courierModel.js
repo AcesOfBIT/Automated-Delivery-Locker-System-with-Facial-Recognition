@@ -19,4 +19,4 @@ const courierModel = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Courier", courierModel);
+export const Courier = mongoose.model("Courier", courierModel);

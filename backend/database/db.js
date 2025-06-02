@@ -3,7 +3,7 @@ import mangoose from 'mongoose'
 const connectdb = async() => {
     try{
         await mangoose.connect(process.env.MONGO_URI, {
-            dbName: "Delivery locker"
+            dbName: "DeliveryLocker"
         });
         console.log("Database Connected");
     } catch(error){
