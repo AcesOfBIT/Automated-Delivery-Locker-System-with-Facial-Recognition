@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes.js";
 import courierRoutes from "./routes/courierRoutes.js";
 import lockerRoutes from "./routes/lockerRoutes.js";
 import packageRoutes from "./routes/packageRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/courier", courierRoutes);
 app.use("/api/package", packageRoutes);
 app.use("/api/locker", lockerRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server working fine");

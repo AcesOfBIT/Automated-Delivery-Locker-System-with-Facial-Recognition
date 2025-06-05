@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import TryCatch from "../utils/TryCatch.js";
 import deleteToken from "../utils/deleteToken.js";
+import { Session } from "../models/sessionModel.js";
 
 export const registerUser = TryCatch(async (req, res) => {
   const { name, email, faceId, phone, role } = req.body;
@@ -23,7 +24,7 @@ export const registerUser = TryCatch(async (req, res) => {
     faceId: hashFaceId,
     role: role || "user",
   });
-  generateToken(user, res);
+  // generateToken(user, res);
   res.status(201).json({
     user,
     message: "User Created",
@@ -51,6 +52,11 @@ export const loginUser = TryCatch(async (req, res) => {
 
   generateToken(user, res);
 
+  await Session.create({
+    userId: user._id,
+    status: "active",
+  });
+
   res.json({
     user,
     message: "Logged in successfully",
@@ -58,6 +64,13 @@ export const loginUser = TryCatch(async (req, res) => {
 });
 
 export const logOutUser = TryCatch(async (req, res) => {
+
+  await Session.findOneAndUpdate(
+    {userId: req.user._id, status:"active"},
+    {logoutTime: new Date(), status: "expired"},
+    {sort: {loginTime: -1}}
+  )
+
   deleteToken(res);
   res.status(200).json({
     message: "Log out successful",
