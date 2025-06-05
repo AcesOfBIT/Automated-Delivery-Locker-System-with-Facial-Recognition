@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", createPackage);
+router.post("/create", createPackage);
 router.get("/", getAllPackages);
 router.get("/recipient/:recipientId", getPackagesByRecipient);
 

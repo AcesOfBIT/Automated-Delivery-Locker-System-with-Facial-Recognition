@@ -8,6 +8,7 @@ const lockerModel = new mongoose.Schema({
   status: {
     type: String,
     required: true,
+    default: "Available",
   },
   location: {
     type: String,

@@ -2,10 +2,9 @@ import { Package } from "../models/packageModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createPackage = TryCatch(async (req, res) => {
-  const { status, deliveryDate, recipientId, lockerId } = req.body;
+  const { deliveryDate, recipientId, lockerId } = req.body;
 
   const pkg = await Package.create({
-    status,
     deliveryDate,
     recipientId,
     lockerId,
