@@ -4,11 +4,12 @@ import {
   getAllPackages,
   getPackagesByRecipient,
 } from "../controllers/packageController.js";
+import { isAuth } from "../middlewares/isAuth.js";
 
 const router = express.Router();
 
-router.post("/create", createPackage);
-router.get("/", getAllPackages);
-router.get("/recipient/:recipientId", getPackagesByRecipient);
+router.post("/create", isAuth, createPackage);
+router.get("/", isAuth, getAllPackages);
+router.get("/recipient/:recipientId", isAuth, getPackagesByRecipient);
 
 export default router;
