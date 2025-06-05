@@ -5,7 +5,7 @@ import TryCatch from "../utils/TryCatch.js";
 import deleteToken from "../utils/deleteToken.js";
 
 export const registerUser = TryCatch(async (req, res) => {
-  const { name, email, faceId, phone } = req.body;
+  const { name, email, faceId, phone, role } = req.body;
 
   let user = await User.findOne({ email });
 
@@ -21,8 +21,9 @@ export const registerUser = TryCatch(async (req, res) => {
     email,
     phone,
     faceId: hashFaceId,
+    role: role || "user",
   });
-  generateToken(user._id, res);
+  generateToken(user, res);
   res.status(201).json({
     user,
     message: "User Created",
@@ -48,7 +49,7 @@ export const loginUser = TryCatch(async (req, res) => {
     });
   }
 
-  generateToken(user._id, res);
+  generateToken(user, res);
 
   res.json({
     user,

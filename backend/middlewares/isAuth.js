@@ -15,7 +15,8 @@ export const isAuth = async (req, res, next) => {
         message: "Token expired",
       });
     }
-    req.user = await User.findById(decodedData.id);
+    req.user = await User.findById(decodedData.id).select("-faceId");
+    req.user.role = decodedData.role;
     next();
   } catch (error) {
     res.status(500).json({
