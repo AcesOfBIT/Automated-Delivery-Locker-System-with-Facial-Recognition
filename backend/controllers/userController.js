@@ -63,3 +63,8 @@ export const logOutUser = TryCatch(async (req, res) => {
     message: "Log out successful",
   });
 });
+
+export const getAllUsers = TryCatch(async (req, res) => {
+  const users = await User.find().select("-faceId");
+  res.status(200).json({ users });
+});
