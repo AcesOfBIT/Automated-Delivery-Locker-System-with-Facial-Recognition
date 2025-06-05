@@ -2,6 +2,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import TryCatch from "../utils/TryCatch.js";
+import deleteToken from "../utils/deleteToken.js";
 
 export const registerUser = TryCatch(async (req, res) => {
   const { name, email, faceId, phone } = req.body;
@@ -52,5 +53,12 @@ export const loginUser = TryCatch(async (req, res) => {
   res.json({
     user,
     message: "Logged in successfully",
+  });
+});
+
+export const logOutUser = TryCatch(async (req, res) => {
+  deleteToken(res);
+  res.status(200).json({
+    message: "Log out successful",
   });
 });
