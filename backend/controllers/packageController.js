@@ -33,3 +33,16 @@ export const getPackagesByRecipient = TryCatch(async (req, res) => {
 
   res.json(packages);
 });
+
+export const getMyPackages = TryCatch(async (req, res) => {
+  const userId = req.user._id;
+
+  const packages = await Package.find({ recipientId: userId }).populate(
+    "lockerId"
+  );
+
+  if (!packages.length) {
+    return res.status(400).json({ message: "No packages found for this user" });
+  }
+  res.json(packages);
+});
