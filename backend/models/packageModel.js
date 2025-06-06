@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
 const packageSchema = new mongoose.Schema({
+  trackingId: {
+    type: String,
+    required: true,
+  },
   status: {
     type: String,
     required: true,
+    enum: ["Pending", "Pickedup"],
     default: "Pending",
   },
   deliveryDate: {

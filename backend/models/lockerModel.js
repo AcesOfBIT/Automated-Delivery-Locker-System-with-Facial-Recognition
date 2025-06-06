@@ -2,17 +2,17 @@ import mongoose from "mongoose";
 
 const lockerModel = new mongoose.Schema({
   size: {
-    type: Number,
+    type: String,
+    enum: ["small", "medium", "large"],
     required: true,
   },
   status: {
     type: String,
-    required: true,
-    default: "Available",
+    enum: ["available", "occupied"],
+    default: "available",
   },
   location: {
     type: String,
-    required: true,
   },
 });
 
