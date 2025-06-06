@@ -1,5 +1,7 @@
+import bcrypt from "bcrypt";
 import { Package } from "../models/packageModel.js";
 import { Locker } from "../models/lockerModel.js";
+import { User } from "../models/userModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createPackage = TryCatch(async (req, res) => {
@@ -64,6 +66,7 @@ export const getMyPackages = TryCatch(async (req, res) => {
 
 export const pickupPackage = TryCatch(async (req, res) => {
   const { packageId } = req.params;
+  const { faceId } = req.body;
 
   const pkg = await Package.findById(packageId);
 
@@ -73,13 +76,28 @@ export const pickupPackage = TryCatch(async (req, res) => {
     });
   }
 
-  if (pkg.status === "Pickedup") {
+  if (pkg.status === "PickedUp") {
     return res.status(400).json({
       message: "package already picked up",
     });
   }
 
-  pkg.status = "Pickedup";
+  if (pkg.recipientId.toString() !== req.user._id.toString()) {
+    return res.status(403).json({
+      message: "You are not the recipient of this package",
+    });
+  }
+
+  const user = await User.findById(req.user._id);
+  const isMatch = await bcrypt.compare(faceId, user.faceId);
+
+  if (!isMatch) {
+    return res.status(401).json({
+      message: "Face ID mismatched",
+    });
+  }
+
+  pkg.status = "PickedUp";
   await pkg.save();
 
   const locker = await Locker.findById(pkg.lockerId);
