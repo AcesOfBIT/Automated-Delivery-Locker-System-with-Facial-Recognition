@@ -33,7 +33,9 @@ export const createPackage = TryCatch(async (req, res) => {
 
   res.status(201).json({
     pkg,
-    message: locker ? "Package created and locker assigned" : "No locker available right now. Package queued",
+    message: locker
+      ? "Package created and locker assigned"
+      : "No locker available right now. Package queued",
   });
 });
 
@@ -114,5 +116,39 @@ export const pickupPackage = TryCatch(async (req, res) => {
   res.status(200).json({
     package: pkg,
     message: "Package picked up and Locker released",
+  });
+});
+
+export const assignLockerToQueuedPackage = TryCatch(async (req, res) => {
+  const { size } = req.body;
+
+  const locker = await Locker.findOne({ size, status: "available" });
+  if (!locker) {
+    return res.status(400).json({
+      message: "No available lockers of this size",
+    });
+  }
+
+  const pkg = await Package.findOne({
+    status: "Queued",
+  }).sort({ deliveryDate: 1 });
+
+  if (!pkg) {
+    return res.status(404).json({
+      message: "No queued package to assign",
+    });
+  }
+
+  pkg.status = "Pending";
+  pkg.lockerId = locker._id;
+  await pkg.save();
+
+  locker.status = "occupied";
+  await locker.save();
+
+  res.status(200).json({
+    message: "Queued package assigned to Locker",
+    package: pkg,
+    locker,
   });
 });

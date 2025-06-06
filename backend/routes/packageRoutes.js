@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  assignLockerToQueuedPackage,
   createPackage,
   getAllPackages,
   getMyPackages,
@@ -17,5 +18,6 @@ router.put("/pickup/:packageId", isAuth, pickupPackage);
 
 router.get("/recipient/:recipientId", isAuth, isAdmin, getPackagesByRecipient);
 router.get("/", isAuth, isAdmin, getAllPackages);
+router.put("/assign-package", isAuth, isAdmin, assignLockerToQueuedPackage);
 
 export default router;
