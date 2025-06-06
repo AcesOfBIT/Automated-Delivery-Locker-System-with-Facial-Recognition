@@ -7,8 +7,7 @@ const packageSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
-    enum: ["Pending", "PickedUp"],
+    enum: ["Queued", "Pending", "PickedUp"],
     default: "Pending",
   },
   deliveryDate: {

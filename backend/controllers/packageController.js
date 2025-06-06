@@ -9,26 +9,31 @@ export const createPackage = TryCatch(async (req, res) => {
 
   const locker = await Locker.findOne({ size, status: "available" });
 
-  if (!locker) {
-    return res.status(400).json({
-      message: `No available ${size} size lockers right now.`,
+  let pkg;
+
+  if (locker) {
+    pkg = await Package.create({
+      trackingId,
+      deliveryDate,
+      recipientId,
+      lockerId: locker._id,
+      status: "Pending",
+    });
+
+    locker.status = "occupied";
+    await locker.save();
+  } else {
+    pkg = await Package.create({
+      trackingId,
+      deliveryDate,
+      recipientId,
+      status: "Queued",
     });
   }
 
-  const pkg = await Package.create({
-    trackingId,
-    deliveryDate,
-    recipientId,
-    lockerId: locker._id,
-    status: "Pending",
-  });
-
-  locker.status = "occupied";
-  await locker.save();
-
   res.status(201).json({
     pkg,
-    message: "Package created successfully",
+    message: locker ? "Package created and locker assigned" : "No locker available right now. Package queued",
   });
 });
 
