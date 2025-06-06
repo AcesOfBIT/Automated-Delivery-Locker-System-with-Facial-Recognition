@@ -14,7 +14,7 @@ export const createLocker = TryCatch(async (req, res) => {
 });
 
 export const getAvailableLocker = TryCatch(async (req, res) => {
-  const lockers = await Locker.find({ status: "Available" });
+  const lockers = await Locker.find({ status: "available" });
   res.json({
     lockers,
     message: "Fetched available lockers",

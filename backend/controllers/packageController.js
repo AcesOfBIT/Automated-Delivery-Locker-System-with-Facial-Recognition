@@ -61,3 +61,35 @@ export const getMyPackages = TryCatch(async (req, res) => {
   }
   res.json(packages);
 });
+
+export const pickupPackage = TryCatch(async (req, res) => {
+  const { packageId } = req.params;
+
+  const pkg = await Package.findById(packageId);
+
+  if (!pkg) {
+    return res.status(400).json({
+      message: "Package not found",
+    });
+  }
+
+  if (pkg.status === "Pickedup") {
+    return res.status(400).json({
+      message: "package already picked up",
+    });
+  }
+
+  pkg.status = "Pickedup";
+  await pkg.save();
+
+  const locker = await Locker.findById(pkg.lockerId);
+  if (locker) {
+    locker.status = "available";
+    await locker.save();
+  }
+
+  res.status(200).json({
+    package: pkg,
+    message: "Package picked up and Locker released",
+  });
+});
