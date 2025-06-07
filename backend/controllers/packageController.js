@@ -6,40 +6,47 @@ import { PickupLog } from "../models/pickupLogModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createPackage = TryCatch(async (req, res) => {
-  const { trackingId, deliveryDate, recipientId, size } = req.body;
+  const { deliveryDate, size, recipientId: bodyRecipientId } = req.body;
 
-  const locker = await Locker.findOne({ size, status: "available" });
+  const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+  const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");
+  const trackingId = `PKG-${dateStr}-${randomStr}`;
 
-  let pkg;
-
-  if (locker) {
-    pkg = await Package.create({
-      trackingId,
-      deliveryDate,
-      recipientId,
-      size,
-      lockerId: locker._id,
-      status: "Pending",
-    });
-
-    locker.status = "occupied";
-    await locker.save();
-  } else {
-    pkg = await Package.create({
-      trackingId,
-      deliveryDate,
-      recipientId,
-      size,
-      status: "Queued",
-    });
+  let recipientId = req.user._id;
+  if (req.user.role === "admin" && bodyRecipientId) {
+    recipientId = bodyRecipientId;
   }
 
-  res.status(201).json({
-    pkg,
-    message: locker
-      ? "Package created and locker assigned"
-      : "No locker available right now. Package queued",
-  });
+  const locker = await Locker.findOneAndUpdate(
+    { size, status: "available" },
+    { status: "occupied" },
+    { new: true }
+  );
+
+  try {
+    const pkg = await Package.create({
+      trackingId,
+      deliveryDate,
+      size,
+      recipientId,
+      status: locker ? "Pending" : "Queued",
+      lockerId: locker?._id,
+    });
+
+    res.status(201).json({
+      message: locker
+        ? "Package created and locker assigned"
+        : "No available locker. Package queued.",
+      pkg,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "Tracking ID already exists. Try again." });
+    }
+    throw error;
+  }
 });
 
 export const getAllPackages = TryCatch(async (req, res) => {
