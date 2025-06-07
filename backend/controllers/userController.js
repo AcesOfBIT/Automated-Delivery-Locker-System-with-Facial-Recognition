@@ -6,7 +6,7 @@ import deleteToken from "../utils/deleteToken.js";
 import { Session } from "../models/sessionModel.js";
 
 export const registerUser = TryCatch(async (req, res) => {
-  const { name, email, faceId, phone, role } = req.body;
+  const { name, email, faceId, phone } = req.body;
 
   let user = await User.findOne({ email });
 
@@ -22,7 +22,6 @@ export const registerUser = TryCatch(async (req, res) => {
     email,
     phone,
     faceId: hashFaceId,
-    role: role || "user",
   });
   // generateToken(user, res);
   res.status(201).json({
@@ -64,12 +63,11 @@ export const loginUser = TryCatch(async (req, res) => {
 });
 
 export const logOutUser = TryCatch(async (req, res) => {
-
   await Session.findOneAndUpdate(
-    {userId: req.user._id, status:"active"},
-    {logoutTime: new Date(), status: "expired"},
-    {sort: {loginTime: -1}}
-  )
+    { userId: req.user._id, status: "active" },
+    { logoutTime: new Date(), status: "expired" },
+    { sort: { loginTime: -1 } }
+  );
 
   deleteToken(res);
   res.status(200).json({
@@ -80,4 +78,34 @@ export const logOutUser = TryCatch(async (req, res) => {
 export const getAllUsers = TryCatch(async (req, res) => {
   const users = await User.find().select("-faceId");
   res.status(200).json({ users });
+});
+
+export const updateUserRole = TryCatch(async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.body;
+
+  if (!["user", "admin", "courier"].includes(role)) {
+    return res.status(400).json({
+      message: "Invalid role",
+    });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  user.role = role;
+  await user.save();
+
+  res.status(200).json({
+    message: `Role updated to ${role} for user ${user.name}`,
+    user: {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
 });
