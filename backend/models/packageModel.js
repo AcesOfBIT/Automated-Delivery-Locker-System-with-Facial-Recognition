@@ -10,6 +10,11 @@ const packageSchema = new mongoose.Schema({
     enum: ["Queued", "Pending", "PickedUp"],
     default: "Pending",
   },
+  size: {
+    type: String,
+    enum: ["small", "medium", "large"],
+    required: true,
+  },
   deliveryDate: {
     type: Date,
     required: true,

@@ -17,6 +17,7 @@ export const createPackage = TryCatch(async (req, res) => {
       trackingId,
       deliveryDate,
       recipientId,
+      size,
       lockerId: locker._id,
       status: "Pending",
     });
@@ -28,6 +29,7 @@ export const createPackage = TryCatch(async (req, res) => {
       trackingId,
       deliveryDate,
       recipientId,
+      size,
       status: "Queued",
     });
   }

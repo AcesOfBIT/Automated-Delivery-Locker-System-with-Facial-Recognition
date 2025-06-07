@@ -25,6 +25,8 @@ app.use("/api/locker", lockerRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/pickup-logs", pickupLogRoutes);
 
+import "./jobs/assignLockers.js";
+
 app.get("/", (req, res) => {
   res.send("Server working fine");
 });
