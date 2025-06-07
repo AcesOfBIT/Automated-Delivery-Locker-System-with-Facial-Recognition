@@ -11,9 +11,6 @@ const lockerModel = new mongoose.Schema({
     enum: ["available", "occupied"],
     default: "available",
   },
-  location: {
-    type: String,
-  },
 });
 
 export const Locker = mongoose.model("Locker", lockerModel);

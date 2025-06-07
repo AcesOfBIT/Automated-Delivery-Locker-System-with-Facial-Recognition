@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { Package } from "../models/packageModel.js";
 import { Locker } from "../models/lockerModel.js";
 import { User } from "../models/userModel.js";
+import { PickupLog } from "../models/pickupLogModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createPackage = TryCatch(async (req, res) => {
@@ -99,10 +100,24 @@ export const pickupPackage = TryCatch(async (req, res) => {
   const isMatch = await bcrypt.compare(faceId, user.faceId);
 
   if (!isMatch) {
+    await PickupLog.create({
+      userId: req.user._id,
+      packageId: pkg._id,
+      success: false,
+      reason: "Face ID mismatched",
+    });
+
     return res.status(401).json({
       message: "Face ID mismatched",
     });
   }
+
+  await PickupLog.create({
+    userId: req.user._id,
+    packageId: pkg._id,
+    success: true,
+    reason: "Face ID matched. Package picked up",
+  });
 
   pkg.status = "PickedUp";
   await pkg.save();

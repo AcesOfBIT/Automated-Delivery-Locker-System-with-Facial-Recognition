@@ -2,10 +2,9 @@ import { Locker } from "../models/lockerModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createLocker = TryCatch(async (req, res) => {
-  const { size, location } = req.body;
+  const { size } = req.body;
   const locker = await Locker.create({
     size,
-    location,
   });
   res.json({
     locker,

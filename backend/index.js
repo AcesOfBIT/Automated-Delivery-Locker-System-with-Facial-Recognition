@@ -7,6 +7,7 @@ import courierRoutes from "./routes/courierRoutes.js";
 import lockerRoutes from "./routes/lockerRoutes.js";
 import packageRoutes from "./routes/packageRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
+import pickupLogRoutes from "./routes/pickupLogRoutes.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use("/api/courier", courierRoutes);
 app.use("/api/package", packageRoutes);
 app.use("/api/locker", lockerRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/pickup-logs", pickupLogRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server working fine");
