@@ -169,13 +169,3 @@ export const assignLockerToQueuedPackage = TryCatch(async (req, res) => {
     locker,
   });
 });
-
-export const getPackagesToDeliver = TryCatch(async (req, res) => {
-  const packages = await Package.find({ status: "Queued" }).sort({
-    deliveryDate: 1,
-  });
-
-  res.status(200).json({
-    packages,
-  });
-});

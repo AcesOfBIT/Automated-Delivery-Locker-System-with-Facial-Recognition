@@ -5,30 +5,38 @@ import { Locker } from "../models/lockerModel.js";
 cron.schedule("*/2 * * * *", async () => {
   console.log("Running locker auto-assignment");
 
-  const availableLockers = await Locker.find({ status: "available" });
+  try {
+    const availableLockers = await Locker.find({ status: "available" });
 
-  for (const locker of availableLockers) {
-    const queuedPackage = await Package.findOne({
-      status: "Queued",
-      size: locker.size,
-    }).sort({
-      deliveryDate: 1,
-    });
+    for (const locker of availableLockers) {
+      const queuedPackage = await Package.findOneAndUpdate(
+        {
+          status: "Queued",
+          size: locker.size,
+        },
+        {
+          status: "Pending",
+          lockerId: locker._id,
+        },
+        {
+          sort: { deliveryDate: 1 },
+          new: true,
+        }
+      );
 
-    if (!queuedPackage) {
-      console.log(`No queued packages left for locker size ${locker.size}`);
-      continue;
+      if (!queuedPackage) {
+        console.log(`No queued packages left for locker size ${locker.size}`);
+        continue;
+      }
+
+      await Locker.findByIdAndUpdate(locker._id, { status: "occupied" });
+
+      console.log(
+        `Assigned locker ${locker._id} to package ${queuedPackage.trackingId}`
+      );
     }
-
-    queuedPackage.status = "Pending";
-    queuedPackage.lockerId = locker._id;
-    await queuedPackage.save();
-
-    locker.status = "occupied";
-    await locker.save();
-
-    console.log(
-      `Assigned locker ${locker._id} to package ${queuedPackage.trackingId}`
-    );
+    console.log("cron locker assignment cycle completed");
+  } catch (error) {
+    console.error("cron job failed", error.message);
   }
 });

@@ -24,6 +24,7 @@ app.use("/api/package", packageRoutes);
 app.use("/api/locker", lockerRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/pickup-logs", pickupLogRoutes);
+app.use("/api/courier", courierRoutes);
 
 import "./jobs/assignLockers.js";
 
