@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { Package } from "../models/packageModel.js";
 import { Locker } from "../models/lockerModel.js";
+import { AssignmentLog } from "../models/assignmentLogModel.js";
 
 cron.schedule("*/2 * * * *", async () => {
   console.log("Running locker auto-assignment");
@@ -30,6 +31,13 @@ cron.schedule("*/2 * * * *", async () => {
       }
 
       await Locker.findByIdAndUpdate(locker._id, { status: "occupied" });
+
+      await AssignmentLog.create({
+        packageId: queuedPackage._id,
+        lockerId: locker._id,
+        source: "cron",
+        assignedBy: null,
+      });
 
       console.log(
         `Assigned locker ${locker._id} to package ${queuedPackage.trackingId}`

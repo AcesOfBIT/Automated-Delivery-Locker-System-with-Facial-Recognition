@@ -8,6 +8,7 @@ import lockerRoutes from "./routes/lockerRoutes.js";
 import packageRoutes from "./routes/packageRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import pickupLogRoutes from "./routes/pickupLogRoutes.js";
+import assignmentLogRoutes from "./routes/assignmentLogRoute.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use("/api/locker", lockerRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/pickup-logs", pickupLogRoutes);
 app.use("/api/courier", courierRoutes);
+app.use("/api/assignment-log", assignmentLogRoutes);
 
 import "./jobs/assignLockers.js";
 import "./jobs/expireInactiveSessions.js";

@@ -1,5 +1,6 @@
 import { Package } from "../models/packageModel.js";
 import { Locker } from "../models/lockerModel.js";
+import { AssignmentLog } from "../models/assignmentLogModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const getPackagesToDeliver = TryCatch(async (req, res) => {
@@ -44,6 +45,13 @@ export const assignLocker = TryCatch(async (req, res) => {
   pkg.status = "Pending";
   pkg.lockerId = locker._id;
   await pkg.save();
+
+  await AssignmentLog.create({
+    packageId: pkg._id,
+    lockerId: locker._id,
+    assignedBy: req.user._id,
+    source: req.user.role,
+  });
 
   res.status(200).json({
     message: "Locker assigned by courier",
