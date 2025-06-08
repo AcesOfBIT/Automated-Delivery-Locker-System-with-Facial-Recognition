@@ -22,6 +22,12 @@ const sessionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  ipAddress: {
+    type: String,
+  },
+  userAgent: {
+    type: String,
+  },
 });
 
 export const Session = mongoose.model("Session", sessionSchema);

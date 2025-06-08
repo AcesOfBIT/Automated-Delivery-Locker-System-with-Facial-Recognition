@@ -4,7 +4,7 @@ import TryCatch from "../utils/TryCatch.js";
 export const getAllSessions = TryCatch(async (req, res) => {
   const sessions = await Session.find()
     .populate("userId", "name email role")
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
   res.status(200).json({ sessions });
 });
 
@@ -13,7 +13,7 @@ export const getUserSessions = TryCatch(async (req, res) => {
 
   const sessions = await Session.find({ userId })
     .sort({ loginTime: -1 })
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -23,7 +23,7 @@ export const getMySessions = TryCatch(async (req, res) => {
 
   const sessions = await Session.find({ userId })
     .sort({ loginTime: -1 })
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
   res.status(200).json({ sessions });
 });
 
@@ -33,7 +33,7 @@ export const getActiveSessions = TryCatch(async (req, res) => {
       loginTime: -1,
     })
     .populate("userId", "name email role")
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -45,7 +45,7 @@ export const getActiveSessionsByUser = TryCatch(async (req, res) => {
       loginTime: -1,
     })
     .populate("userId", "name email role")
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -57,7 +57,7 @@ export const getMyActiveSessions = TryCatch(async (req, res) => {
     .sort({
       loginTime: -1,
     })
-    .select("loginTime logoutTime lastActivity status");
+    .select("ipAddress userAgent loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });

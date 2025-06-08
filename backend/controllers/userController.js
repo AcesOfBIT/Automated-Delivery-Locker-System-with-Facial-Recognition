@@ -54,6 +54,10 @@ export const loginUser = TryCatch(async (req, res) => {
   await Session.create({
     userId: user._id,
     status: "active",
+    loginTime: new Date(),
+    lastActivity: new Date(),
+    ipAddress: req.ip || req.connection.remoteAddress,
+    userAgent: req.get("User-agent"),
   });
 
   res.json({
