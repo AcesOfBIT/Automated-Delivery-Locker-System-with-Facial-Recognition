@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getAllUsers,
+  getUsersByRole,
   loginUser,
   logOutUser,
   registerUser,
@@ -17,5 +18,6 @@ router.get("/logout", isAuth, logOutUser);
 
 router.get("/all", isAuth, isAdmin, getAllUsers);
 router.put("/role/:userId", isAuth, isAdmin, updateUserRole);
+router.get("/role/:role", isAuth, isAdmin, getUsersByRole);
 
 export default router;

@@ -109,3 +109,16 @@ export const updateUserRole = TryCatch(async (req, res) => {
     },
   });
 });
+
+export const getUsersByRole = TryCatch(async (req, res) => {
+  const { role } = req.params;
+
+  if (!["admin", "user", "courier"].includes(role)) {
+    return res.status(400).json({
+      message: "Invalid role",
+    });
+  }
+
+  const users = await User.find({ role }).select("name email role");
+  res.status(200).json({users});
+});
