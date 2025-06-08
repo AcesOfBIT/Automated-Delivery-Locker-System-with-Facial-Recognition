@@ -170,6 +170,13 @@ export const assignLockerToQueuedPackage = TryCatch(async (req, res) => {
   locker.status = "occupied";
   await locker.save();
 
+  await AssignmentLog.create({
+    packageId: pkg._id,
+    lockerId: locker._id,
+    assignedBy: req.user._id,
+    source: "admin",
+  });
+
   res.status(200).json({
     message: "Queued package assigned to Locker",
     package: pkg,
