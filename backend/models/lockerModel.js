@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const lockerModel = new mongoose.Schema({
+  lockerNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   size: {
     type: String,
     enum: ["small", "medium", "large"],
