@@ -27,6 +27,7 @@ app.use("/api/pickup-logs", pickupLogRoutes);
 app.use("/api/courier", courierRoutes);
 
 import "./jobs/assignLockers.js";
+import "./jobs/expireInactiveSessions.js";
 
 app.get("/", (req, res) => {
   res.send("Server working fine");

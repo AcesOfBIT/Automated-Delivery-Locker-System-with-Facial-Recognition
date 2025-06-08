@@ -2,14 +2,18 @@ import { Session } from "../models/sessionModel.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const getAllSessions = TryCatch(async (req, res) => {
-  const sessions = await Session.find().populate("userId", "name email role");
+  const sessions = await Session.find()
+    .populate("userId", "name email role")
+    .select("loginTime logoutTime lastActivity status");
   res.status(200).json({ sessions });
 });
 
 export const getUserSessions = TryCatch(async (req, res) => {
   const { userId } = req.params;
 
-  const sessions = await Session.find({ userId }).sort({ loginTime: -1 });
+  const sessions = await Session.find({ userId })
+    .sort({ loginTime: -1 })
+    .select("loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -17,7 +21,9 @@ export const getUserSessions = TryCatch(async (req, res) => {
 export const getMySessions = TryCatch(async (req, res) => {
   const userId = req.user._id;
 
-  const sessions = await Session.find({ userId }).sort({ loginTime: -1 });
+  const sessions = await Session.find({ userId })
+    .sort({ loginTime: -1 })
+    .select("loginTime logoutTime lastActivity status");
   res.status(200).json({ sessions });
 });
 
@@ -26,7 +32,8 @@ export const getActiveSessions = TryCatch(async (req, res) => {
     .sort({
       loginTime: -1,
     })
-    .populate("userId", "name email role");
+    .populate("userId", "name email role")
+    .select("loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -37,7 +44,8 @@ export const getActiveSessionsByUser = TryCatch(async (req, res) => {
     .sort({
       loginTime: -1,
     })
-    .populate("userId", "name email role");
+    .populate("userId", "name email role")
+    .select("loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
@@ -45,9 +53,11 @@ export const getActiveSessionsByUser = TryCatch(async (req, res) => {
 export const getMyActiveSessions = TryCatch(async (req, res) => {
   const userId = req.user._id;
 
-  const sessions = await Session.find({ userId, status: "active" }).sort({
-    loginTime: -1,
-  });
+  const sessions = await Session.find({ userId, status: "active" })
+    .sort({
+      loginTime: -1,
+    })
+    .select("loginTime logoutTime lastActivity status");
 
   res.status(200).json({ sessions });
 });
