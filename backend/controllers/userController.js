@@ -120,5 +120,30 @@ export const getUsersByRole = TryCatch(async (req, res) => {
   }
 
   const users = await User.find({ role }).select("name email role");
-  res.status(200).json({users});
+  res.status(200).json({ users });
+});
+
+export const deleteUser = TryCatch(async (req, res) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  if (user.role === "admin") {
+    const countAdmin = await User.countDocuments({ role: "admin" });
+    if (countAdmin <= 1) {
+      return res.status(403).json({
+        message: "Cannot delete the last Admin",
+      });
+    }
+  }
+
+  await user.deleteOne(user);
+  res.status(200).json({
+    message: `${user.name} deleted successfully`,
+  });
 });
