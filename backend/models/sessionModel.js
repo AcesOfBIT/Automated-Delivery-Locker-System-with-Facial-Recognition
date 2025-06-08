@@ -18,6 +18,10 @@ const sessionSchema = new mongoose.Schema({
     enum: ["active", "expired"],
     default: "active",
   },
+  lastActivity: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const Session = mongoose.model("Session", sessionSchema);
