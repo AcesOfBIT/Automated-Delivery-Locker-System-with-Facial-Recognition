@@ -5,6 +5,6 @@ import { getAssignmentLogs } from "../controllers/assignmentLogController.js";
 
 const router = express.Router();
 
-router.get("/", isAuth, isAdmin, getAssignmentLogs);
+router.get("/assignment-log", isAuth, isAdmin, getAssignmentLogs);
 
 export default router;
