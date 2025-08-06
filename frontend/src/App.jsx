@@ -6,6 +6,7 @@ import Register from "./components/Auth/Register.jsx";
 import UserDashboard from "./pages/UserDashboard.jsx";
 import CourierDashboard from "./pages/CourierDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 function App() {
   return (

@@ -1,75 +1,81 @@
-import React, { useState } from "react";
-import API from "../../api";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext.jsx";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import API from '../../api'; // <-- your Axios instance
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await API.post("/login", form);
-      const token = res.data.token;
-      const userData = {
-        role: res.data.role,
-        name: res.data.name,
-        email: res.data.email,
-      };
-      login(userData, token); // Save to context and localStorage
+  e.preventDefault();
 
-      if (userData.role === "admin") navigate("/admin/dashboard");
-      else if (userData.role === "courier") navigate("/courier/dashboard");
-      else navigate("/user/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+  try {
+    const res = await API.post('/login', { email, password });
+
+    const { user, token } = res.data;
+
+    login(user, token); // save in context
+
+    // Role-based navigation
+    if (user.role === 'admin') {
+      navigate('/admin/dashboard');
+    } else if (user.role === 'courier') {
+      navigate('/courier/dashboard');
+    } else if (user.role === 'user') {
+      navigate('/user/dashboard');
+    } else {
+      navigate('/'); // fallback
     }
-  };
+
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.message || 'Login failed');
+  }
+};
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+        className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {error && (
+          <div className="mb-4 text-red-600 text-sm text-center">
+            {error}
+          </div>
+        )}
 
         <input
-          name="email"
-          placeholder="Email"
           type="email"
-          onChange={handleChange}
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Email"
+          className="w-full p-2 border rounded mb-4"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
+
         <input
-          name="password"
           type="password"
           placeholder="Password"
-          onChange={handleChange}
-          className="w-full px-4 py-2 mb-6 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 border rounded mb-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
+
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
           Login
         </button>
-        <p className="mt-4 text-center text-sm">
-          Don't have an account?{" "}
-          <a href="/register" className="text-blue-600 hover:underline">
-            Register
-          </a>
-        </p>
       </form>
     </div>
   );

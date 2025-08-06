@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import API from "../api"; // Axios instance
 
 const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // user = { name, email, role, etc. }
@@ -27,10 +30,17 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+  try {
+    await API.get('/logout');
+  } catch (err) {
+    console.error('Logout failed', err);
+  } finally {
+    localStorage.removeItem('token'); // optional fallback
     setUser(null);
-  };
+    navigate('/login');
+  }
+};
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
@@ -39,5 +49,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use auth context
-export const useAuth = () => useContext(AuthContext);
