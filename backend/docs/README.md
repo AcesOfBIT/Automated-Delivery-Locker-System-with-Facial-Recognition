@@ -186,10 +186,3 @@ npm run dev
 
 ---
 
-## 👨‍💻 Contributors
-
-- Backend: [Your Name]
-- Frontend: [Frontend Dev Name]
-- Special thanks: Cron (for never sleeping)
-
----
