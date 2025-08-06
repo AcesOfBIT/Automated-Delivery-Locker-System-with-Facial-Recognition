@@ -84,12 +84,13 @@ export const getMe = TryCatch(async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const { name, email, phone } = req.user;
+  const { name, email, phone, role } = req.user;
 
   res.status(200).json({
     name,
     email,
     phone,
+    role,
   });
 });
 
