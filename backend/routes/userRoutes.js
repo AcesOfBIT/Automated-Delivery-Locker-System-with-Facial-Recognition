@@ -2,6 +2,7 @@ import express from "express";
 import {
   deleteUser,
   getAllUsers,
+  getMe,
   getUsersByRole,
   loginUser,
   logOutUser,
@@ -11,11 +12,13 @@ import {
 import { isAdmin } from "../middlewares/isAdmin.js";
 import { isAuth } from "../middlewares/isAuth.js";
 
+
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/logout", isAuth, logOutUser);
+router.get("/me", isAuth, getMe);
 
 router.get("/all", isAuth, isAdmin, getAllUsers);
 router.put("/role/:userId", isAuth, isAdmin, updateUserRole);

@@ -79,6 +79,20 @@ export const logOutUser = TryCatch(async (req, res) => {
   });
 });
 
+export const getMe = TryCatch(async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const { name, email, phone } = req.user;
+
+  res.status(200).json({
+    name,
+    email,
+    phone,
+  });
+});
+
 export const getAllUsers = TryCatch(async (req, res) => {
   const users = await User.find().select("-faceId");
   res.status(200).json({ users });
