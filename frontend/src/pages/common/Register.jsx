@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import API from '../../api/api';
 import { useNavigate } from 'react-router-dom';
+import API from '../../api/api.js';
 
 const Register = () => {
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' });
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    faceId: '',
+  });
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,63 +22,69 @@ const Register = () => {
       await API.post('/register', form);
       navigate('/login');
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || 'Registration failed');
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+        className="bg-white w-full max-w-md rounded-lg shadow p-6"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {error && (
+          <div className="text-red-600 text-sm text-center mb-4">{error}</div>
+        )}
 
         <input
+          type="text"
           name="name"
           placeholder="Name"
+          value={form.name}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
+          className="w-full border rounded px-3 py-2 mb-4"
         />
+
         <input
-          name="email"
           type="email"
+          name="email"
           placeholder="Email"
+          value={form.email}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
+          className="w-full border rounded px-3 py-2 mb-4"
         />
+
         <input
-          name="password"
-          type="password"
-          placeholder="Password"
+          type="tel"
+          name="phone"
+          placeholder="Phone"
+          value={form.phone}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
+          className="w-full border rounded px-3 py-2 mb-4"
         />
-        <select
-          name="role"
+
+        <input
+          type="text"
+          name="faceId"
+          placeholder="Face ID"
+          value={form.faceId}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-6 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="user">User</option>
-          <option value="courier">Courier</option>
-        </select>
+          required
+          className="w-full border rounded px-3 py-2 mb-4"
+        />
+
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition"
         >
           Register
         </button>
-        <p className="mt-4 text-center text-sm">
-          Already have an account?{' '}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Login
-          </a>
-        </p>
       </form>
     </div>
   );

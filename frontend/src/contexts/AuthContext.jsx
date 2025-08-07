@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import API from "../api";
+import API from "../api/api.js";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
